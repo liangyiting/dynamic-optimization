@@ -1,0 +1,44 @@
+function [dLa,La1,La,root]=OCFElagrange(tao);
+%La(i,j)=[Lai(0),Lai(sj)]
+%dLa(i,j)=[dLai(0),dLai(sj)]
+%La1(1,:)=La:(1);
+if length(tao)==1&tao>0;
+ps=legendre(tao);
+root=roots(ps);
+root=root';lis=[];
+for k=1:tao;
+    s=0;
+    for i=1:tao;
+        if root(k)>root(i);s=s+1;end;
+    end;
+    lis(s+1)=root(k);
+end;
+root=lis;
+T=[-1,root];
+%T=[-1,root,1];
+%li=2/(tao+1);T=-1:li:1-li;
+La1=[];La=[];dLa=[];Las=[];ep=1e-7;
+for k=1:length(T);
+    Tk=T;Tk(k)=[];pk=poly(Tk);qk=polyval(pk,T(k));
+    La1=[La1,polyval(pk/qk,1)];
+    La=[La;polyval(pk/qk,T)];
+    Las=[Las;polyval(pk/qk,T+ep)];
+    dlagli=polyder(pk/qk);
+    dLa=[dLa;polyval(dlagli,T)];
+end;
+elseif size(tao,2)>=2&size(tao,1)==1;
+    root=tao(2:end);
+    T=tao;
+%T=[-1,root,1];
+%li=2/(tao+1);T=-1:li:1-li;
+La1=[];La=[];dLa=[];Las=[];ep=1e-7;
+for k=1:length(T);
+    Tk=T;Tk(k)=[];pk=poly(Tk);qk=polyval(pk,T(k));
+    La1=[La1,polyval(pk/qk,1)];
+    La=[La;polyval(pk/qk,T)];
+    Las=[Las;polyval(pk/qk,T+ep)];
+    dlagli=polyder(pk/qk);
+    dLa=[dLa;polyval(dlagli,T)];
+end;
+%[(Las-La)/ep,dLa]
+end;
